@@ -1,0 +1,39 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "Pony episode",
+	"type": "object",
+	"properties": {
+		"label_name": { "type": "string",  "examples": ["mlp.s01e01_dialog"] },
+		"friendly_name": { "type": "string", "examples": ["Season 1 Episode 1"] },
+		"last_modified": { "type": "string", "format": "date-time" },
+		"original_sha1": { "type": "string" },
+		"izo_sha1": { "type": "string" },
+		"unmix_sha1": { "type": "string" },
+		"labels": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"start": { "type": "number", "examples": [871.104000] },
+					"end": { "type": "number", "examples": [872.342502] },
+					"character": { "type": "string", "examples": ["Twilight"] },
+					"mood": { 
+						"type": "array",
+						"items": {
+							"type": "string",
+							"enum": ["neutral", "happy", "amused", "sad", "annoyed", "angry", 
+								"disgust", "sarcastic", "smug", "fear", "anxious", "confused", 
+								"surprised", "tired", "whispering", "shouting", "whining"]
+						}
+					},
+					"transcript": { "type": "string", "examples": ["I'm Twilight Sparkle."] },
+					"ideal_source": { "type": "string", "examples": ["original", "izo", "unmix"] },
+					"noise_level": { "type": "string", "enum": ["clean", "noisy", "verynoisy"] },
+					"reviewed": { "type": "boolean" }
+				},
+				"required": ["start", "end", "character", "mood", "transcript", "reviewed"]
+			}
+		}
+	},
+	"required": ["label_name", "last_modified", "labels"]
+}
