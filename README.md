@@ -15,8 +15,8 @@ A faster way to review the existing labels and select the cleanest audio source.
 * If everything worked correctly, the three Listen buttons at the top should play audio when clicked.
 
 ## How to use
-* Load an episode. You can either click the buttons at the top, or use the numeric keys as indicated.
-* Listen to all three versions of the line.
+* Load an episode. Check the thread to see who's working on what.
+* Listen to all three versions of the line. You can either click the buttons at the top, or use the numeric keys as indicated.
 * Adjust the metadata as necessary.
 * Select the audio source that strikes the best balance between quality and noise reduction.
 * If you made a mistake, use the leftmost button to go back a line.
