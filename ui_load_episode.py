@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'load_episode.ui',
 # licensing of 'load_episode.ui' applies.
 #
-# Created: Sun Oct 20 23:46:29 2019
+# Created: Wed Oct 23 13:27:49 2019
 #      by: pyside2-uic  running on PySide2 5.13.1
 #
 # WARNING! All changes made in this file will be lost!

@@ -4,6 +4,9 @@ import datetime
 import hashes
 import hashlib
 import json
+import math
+import string
+import ffmpeg
 from jsonschema import validate
 
 with open(os.path.dirname(os.path.realpath(__file__)) + "/pony_schema.json") as f:
@@ -61,27 +64,97 @@ def check_progress(filename):
 	else:
 		return int((a/b)*99)
 
-#Unfinished
-def export_to_labels(episode_data):
+def generate_label_filename(l):
+	if l["noise_level"] == "noisy":
+		noise = "Noisy"
+	elif l["noise_level"] == "verynoisy":
+		noise = "Very Noisy"
+	else:
+		noise = ""
+	hour = int(math.floor(round(l["start"]) / 3600))
+	minute = int(math.floor(round(l["start"]) / 60 % 60))
+	second = int(math.floor(round(l["start"]) % 60))
+	name = ('{0:02d}'.format(hour) + "_" + '{0:02d}'.format(minute) + "_" + '{0:02d}'.format(second) + "_" 
+	+ l["character"] + "_" + string.capwords(" ".join(l["mood"])) + "_" + noise 
+	+ "_" + l["transcript"] + "\n")
+	return name
+
+def generate_clean_filename(l, label_name):
+	name = generate_label_filename(l)
+	split = name.split(sep="_")
+	for i, s in enumerate(split):
+		split[i] = "".join(x for x in s if x.isalnum())
+		split[i] = split[i][:32]
+	name = "".join(x for x in label_name if x.isalnum()) + "_" + "_".join(split).lower()
+	return name
+
+def export_to_labels(episode_data, character_filter = None, source_filter = None):
 	dirpath = os.path.dirname(os.path.realpath(__file__)) + "/exported_labels/"
 	try:
 		os.makedirs(dirpath)
 	except: pass
-	fullpath = dirpath + episode_data["label_name"] + "_export.txt"
+	if source_filter != None:
+		fullpath = dirpath + episode_data["label_name"] + "_" + source_filter + ".txt"
+	else:
+		fullpath = dirpath + episode_data["label_name"] + ".txt"
 	with open(fullpath, 'w') as f:
+		missing_warning = False
 		for l in episode_data["labels"]:
-			if l["noise_level"] == "noisy":
-				noise = "Noisy"
-			elif l["noise_level"] == "verynoisy":
-				noise = "Very Noisy"
-			else:
-				noise = ""
+			if character_filter != None and l["character"] != character_filter:
+				continue
+			if source_filter != None and "ideal_source" not in l:
+				if not missing_warning:
+					print("Warning: missing source(s) in " + episode_data["label_name"])
+					missing_warning = True
+				continue
+			if source_filter != None and l["ideal_source"] != source_filter:
+				continue
 			f.write(
-				"{:.6f}".format(l["start"]) + "\t" + "{:.6f}".format(l["end"]) + "\t" + "xx_xx_xx_" 
-				+ l["character"] + "_" + " ".join(l["mood"]).capitalize() + "_" + noise 
-				+ "_" + l["transcript"] + "\n"
+				"{:.6f}".format(l["start"]) + "\t" + "{:.6f}".format(l["end"]) + "\t" 
+				+ generate_label_filename(l)
 			)
 	return fullpath
+
+def find_audio_path(episode_name):
+	original_path = ""
+	izo_path = ""
+	unmix_path = ""
+	original_hash = hashes.original_hashes[episode_name]
+	izo_hash = hashes.izo_hashes[episode_name]
+	unmix_hash = hashes.unmix_hashes[episode_name]
+	for k, v in config["audio_hashes"].items():
+		if v == original_hash:
+			original_path = k
+		if v == izo_hash:
+			izo_path = k
+		if v == unmix_hash:
+			unmix_path = k
+	return (original_path, izo_path, unmix_path)
+
+def split_by_pony(episode_data, character_filter = None, default_source = "izo"):
+	metadata = []
+	dirpath = os.path.dirname(os.path.realpath(__file__)) + "/exported_splits/wavs/"
+	try:
+		os.makedirs(dirpath)
+	except: pass
+	original_path, izo_path, unmix_path = find_audio_path(episode_data["label_name"])
+	for l in episode_data["labels"]:
+		if character_filter != None and l["character"] != character_filter:
+			continue
+		if "ideal_source" in l:
+			source = l["ideal_source"]
+		else:
+			source = default_source
+		if source == "original":
+			inputfile = original_path
+		elif source == "izo":
+			inputfile = izo_path
+		elif source == "unmix":
+			inputfile = unmix_path
+		filename = generate_clean_filename(l, episode_data["label_name"])
+		ffmpeg.input(inputfile, ss = l["start"], t = l["end"] - l["start"]).output(dirpath + filename + ".wav").overwrite_output().run()
+		metadata.append(filename + "|" + l["transcript"] + "|" + l["transcript"])
+	return metadata
 
 def export_to_json(episode_data):
 	dirpath = os.path.dirname(os.path.realpath(__file__)) + "/saved_changes/"

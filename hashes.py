@@ -142,15 +142,15 @@ friendly_names = {
 	"fim_s06e24": "Season 6, Episode 24",
 	"fim_s06e25": "Season 6, Episode 25",
 	"fim_s06e26": "Season 6, Episode 26",
-	"fim_s09e22": "Season 9, Episode 22",
-	"fim_s09e23": "Season 9, Episode 23",
-	"fim_s09e24": "Season 9, Episode 24",
-	"fim_s09e25": "Season 9, Episode 25",
-	"fim_s09e26": "Season 9, Episode 26",
-	"eqg_original_movie": "Equestria Girls (Original)",
-	"eqg_friendship_games": "Equestria Girls: Friendship Games",
-	"eqg_legend_of_everfree": "Equestria Girls: Legend of Everfree",
-	"eqg_rainbow_rocks": "Equestria Girls: Rainbow Rocks"
+	#"fim_s09e22": "Season 9, Episode 22",
+	#"fim_s09e23": "Season 9, Episode 23",
+	#"fim_s09e24": "Season 9, Episode 24",
+	#"fim_s09e25": "Season 9, Episode 25",
+	#"fim_s09e26": "Season 9, Episode 26",
+	#"eqg_original_movie": "Equestria Girls (Original)",
+	#"eqg_friendship_games": "Equestria Girls: Friendship Games",
+	#"eqg_legend_of_everfree": "Equestria Girls: Legend of Everfree",
+	#"eqg_rainbow_rocks": "Equestria Girls: Rainbow Rocks"
 }
 
 original_hashes = {

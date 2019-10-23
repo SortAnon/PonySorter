@@ -3,7 +3,7 @@ import datetime
 import threading
 import queue
 import os
-from pydub import AudioSegment
+import ffmpeg
 from openal import *
 import time
 import gc
@@ -90,7 +90,9 @@ class MainWindow(QMainWindow):
 		self.ui.actionLoad_episode.triggered.connect(self.load_episode)
 		self.ui.actionSave_changes.triggered.connect(self.save_changes)
 		self.ui.actionAdd_audio_path.triggered.connect(self.add_audio_path)
-		self.ui.actionGenerate_Audacity_labels.triggered.connect(self.export_to_labels)
+		self.ui.actionGenerate_Audacity_labels.triggered.connect(lambda: self.export_to_labels(None))
+		self.ui.actionSplit_by_pony.triggered.connect(lambda: self.split_by_pony("Twilight"))
+		self.ui.actionGenerate_Audacity_labels_all_episodes.triggered.connect(lambda: self.export_all_labels(None))
 		#Previous/next events
 		self.ui.button_next.clicked.connect(lambda: self.next_label(False))
 		self.ui.button_previous.clicked.connect(lambda: self.next_label(True))
@@ -265,55 +267,38 @@ class MainWindow(QMainWindow):
 		self.load_audio()
 		self.ui.actionSave_changes.setEnabled(True)
 
-	#Load audio files. Converts to Ogg Vorbis first; OpenAL doesn't seem to like some FLAC files
-	#Really messy, wastes lots of RAM. Should probably rewrite
+	#Load audio files. Converts to Ogg Vorbis first; OpenAL plays some FLAC files as loud static
+	#Crashes occasionally with "double free or corruption (out)" or "corrupted size vs. prev_size"
 	def load_audio(self):
-		original_path = ""
-		original_hash = hashes.original_hashes[self.episode_data["label_name"]]
-		izo_path = ""
-		izo_hash = hashes.izo_hashes[self.episode_data["label_name"]]
-		unmix_path = ""
-		unmix_hash = hashes.unmix_hashes[self.episode_data["label_name"]]
-		for k, v in import_export.config["audio_hashes"].items():
-			if v == original_hash:
-				original_path = k
-			if v == izo_hash:
-				izo_path = k
-			if v == unmix_hash:
-				unmix_path = k
+		def convert_to_ogg(inpath, outname):
+			outpath = os.path.dirname(os.path.realpath(__file__)) + "/" + outname + ".ogg"
+			ffmpeg.input(inpath).output(outpath).overwrite_output().run()
+			return outpath
+		self.ui.all_buttons.setEnabled(False)
+		original_path, izo_path, unmix_path = import_export.find_audio_path(self.episode_data["label_name"])
 		if original_path == "":
 			self.console("Error: Original audio not found")
 			self.source1 = None
 		else:
-			self.console("Loading original audio from " + original_path)
-			flac = AudioSegment.from_file(original_path, format="flac")
-			temp1_path = os.path.dirname(os.path.realpath(__file__)) + "/temp1.ogg"
-			flac.export(temp1_path, format="ogg")
-			del flac
-			gc.collect()
-			self.source1 = oalOpen(temp1_path)
+			self.console("Loading original audio from " + original_path + "...")
+			QApplication.processEvents()
+			self.source1 = oalOpen(convert_to_ogg(original_path, ".temp1"))
 		if izo_path == "":
 			self.console("Error: iZo audio not found")
 			self.source2 = None
 		else:
-			self.console("Loading iZo audio from " + izo_path)
-			flac = AudioSegment.from_file(izo_path, format="flac")
-			temp2_path = os.path.dirname(os.path.realpath(__file__)) + "/temp2.ogg"
-			flac.export(temp2_path, format="ogg")
-			del flac
-			gc.collect()
-			self.source2 = oalOpen(temp2_path)
+			self.console("Loading iZo audio from " + izo_path + "...")
+			QApplication.processEvents()
+			self.source2 = oalOpen(convert_to_ogg(izo_path, ".temp2"))
 		if unmix_path == "":
 			self.console("Error: iZo+Unmix audio not found")
 			self.source3 = None
 		else:
-			self.console("Loading iZo+Unmix audio from " + unmix_path)
-			flac = AudioSegment.from_file(unmix_path, format="flac")
-			temp3_path = os.path.dirname(os.path.realpath(__file__)) + "/temp3.ogg"
-			flac.export(temp3_path, format="ogg")
-			del flac
-			gc.collect()
-			self.source3 = oalOpen(temp3_path)
+			self.console("Loading iZo+Unmix audio from " + unmix_path + "...")
+			QApplication.processEvents()
+			self.source3 = oalOpen(convert_to_ogg(unmix_path, ".temp3"))
+		self.console("\nLoading complete!")
+		self.ui.all_buttons.setEnabled(True)
 	
 	#Save episode_data to JSON file
 	def save_changes(self):
@@ -324,12 +309,51 @@ class MainWindow(QMainWindow):
 		self.console("Saved changes to " + path)
 	
 	#Save episode_data to Audacity labels
-	def export_to_labels(self):
+	def export_to_labels(self, character = None):
 		self.update_dictionary()
 		self.episode_data["last_modified"] = datetime.datetime.utcnow().isoformat()
-		path = import_export.export_to_labels(self.episode_data)
-		self.console("Exported changes to " + path)
-		self.console("NOTE: This feature is unfinished")
+		import_export.export_to_labels(self.episode_data, character, "original")
+		import_export.export_to_labels(self.episode_data, character, "izo")
+		import_export.export_to_labels(self.episode_data, character, "unmix")
+		path = import_export.export_to_labels(self.episode_data, character, None)
+		self.console("Exported labels to " + path)
+	
+	#Export all saved episodes to Audacity labels
+	def export_all_labels(self, character = None):
+		for k, _ in hashes.friendly_names.items():
+			path1 = os.path.dirname(os.path.realpath(__file__)) + "/saved_changes/" + k + ".json"
+			path2 = os.path.dirname(os.path.realpath(__file__)) + "/labels/" + k + ".txt"
+			if os.path.exists(path1):
+				export_data = import_export.import_from_json(path1)
+			elif os.path.exists(path2):
+				export_data = import_export.import_from_labels(path2)
+			else:
+				continue
+			import_export.export_to_labels(export_data, character, "original")
+			import_export.export_to_labels(export_data, character, "izo")
+			import_export.export_to_labels(export_data, character, "unmix")
+			import_export.export_to_labels(export_data, character, None)
+		self.console("Exported all labels to " + os.path.dirname(os.path.realpath(__file__)) + "/exported_labels/")
+
+	#Splits audio samples and generates LJ Speech metadata
+	def split_by_pony(self, character = None):
+		metadata = []
+		for k, _ in hashes.friendly_names.items():
+			path1 = os.path.dirname(os.path.realpath(__file__)) + "/saved_changes/" + k + ".json"
+			path2 = os.path.dirname(os.path.realpath(__file__)) + "/labels/" + k + ".txt"
+			if os.path.exists(path1):
+				export_data = import_export.import_from_json(path1)
+			elif os.path.exists(path2):
+				export_data = import_export.import_from_labels(path2)
+			else:
+				continue
+			self.console("Exporting from " + export_data["label_name"] +  "...")
+			QApplication.processEvents()
+			metadata.extend(import_export.split_by_pony(export_data, character, "izo"))
+		with open(os.path.dirname(os.path.realpath(__file__)) + "/exported_splits/transcripts.csv", 'w') as f:
+			for m in metadata:
+				f.write(m + "\n")
+		self.console("Done! Exported all " + character + " splits to " + os.path.dirname(os.path.realpath(__file__)) + "/exported_splits/")
 	
 	#Update the paths where the audio files are stored
 	def add_audio_path(self):
