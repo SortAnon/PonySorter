@@ -152,7 +152,7 @@ def split_by_pony(episode_data, character_filter = None, default_source = "izo")
 		elif source == "unmix":
 			inputfile = unmix_path
 		filename = generate_clean_filename(l, episode_data["label_name"])
-		ffmpeg.input(inputfile, ss = l["start"], t = l["end"] - l["start"]).output(dirpath + filename + ".wav").overwrite_output().run()
+		ffmpeg.input(inputfile, ss = l["start"], t = l["end"] - l["start"]).output(dirpath + filename + ".wav", ar = "22050").overwrite_output().run()
 		metadata.append(filename + "|" + l["transcript"] + "|" + l["transcript"])
 	return metadata
 
