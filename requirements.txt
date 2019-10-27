@@ -2,3 +2,4 @@ jsonschema>=3.0.2
 PyOpenAL>=0.7.7a1
 PySide2>=5.13.1
 ffmpeg_python>=0.2.0
+PyOgg>=0.6.11a1
