@@ -23,7 +23,7 @@
 							"type": "string",
 							"enum": ["neutral", "happy", "amused", "sad", "annoyed", "angry", 
 								"disgust", "sarcastic", "smug", "fear", "anxious", "confused", 
-								"surprised", "tired", "whispering", "shouting", "whining"]
+								"surprised", "tired", "whispering", "shouting", "whining", "crazy"]
 						}
 					},
 					"transcript": { "type": "string", "examples": ["I'm Twilight Sparkle."] },
