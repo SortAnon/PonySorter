@@ -18,7 +18,7 @@ from PySide2.QtWidgets import (
     QMessageBox,
     QInputDialog,
 )
-from PySide2.QtCore import QFile, QTimer
+from PySide2.QtCore import QFile, QTimer, Qt
 from PySide2.QtGui import QColor, QTextCursor
 from ui_main_window import Ui_MainWindow
 from ui_load_episode import Ui_Dialog
@@ -465,6 +465,7 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
     window = MainWindow()
     window.move(
