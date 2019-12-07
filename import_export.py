@@ -7,7 +7,6 @@ import json
 import math
 import string
 import ffmpeg
-import epitran
 from jsonschema import validate
 
 with open(os.path.dirname(os.path.realpath(__file__)) + "/pony_schema.json") as f:
@@ -169,8 +168,6 @@ def split_by_pony(
     mood_filter=[],
     allow_questions=True,
     default_source="izo",
-    phonetic=False,
-    labels_only=False,
 ):
     metadata = []
     dirpath = os.path.dirname(os.path.realpath(__file__)) + "/exported_splits/wavs/"
@@ -179,8 +176,6 @@ def split_by_pony(
     except:
         pass
     original_path, izo_path, unmix_path = find_audio_path(episode_data["label_name"])
-    if phonetic:
-        epi = epitran.Epitran("eng-Latn")
     for l in episode_data["labels"]:
         if character_filter != None and l["character"] != character_filter:
             continue
@@ -199,17 +194,10 @@ def split_by_pony(
         elif source == "unmix":
             inputfile = unmix_path
         filename = generate_clean_filename(l, episode_data["label_name"])
-        if not labels_only:
-            ffmpeg.input(inputfile, ss=l["start"], t=l["end"] - l["start"]).output(
-                dirpath + filename + ".wav", ar="22050"
-            ).overwrite_output().run()
-        if phonetic:
-            phonemes = epi.transliterate(l["transcript"])
-            print(phonemes)
-            metadata.append(filename + "|" + l["transcript"] + "|" + phonemes)
-        else:
-            print(l["transcript"])
-            metadata.append(filename + "|" + l["transcript"] + "|" + l["transcript"])
+        ffmpeg.input(inputfile, ss=l["start"], t=l["end"] - l["start"]).output(
+            dirpath + filename + ".wav", ar="22050"
+        ).overwrite_output().run()
+        metadata.append(filename + "|" + l["transcript"] + "|" + l["transcript"])
     return metadata
 
 
@@ -245,3 +233,4 @@ def hash_audio_files(queue):
     queue.put("Done! Found " + str(new_audio) + " new audio file(s)")
     write_config()
     queue.put("msgdone")
+
