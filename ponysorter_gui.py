@@ -407,7 +407,9 @@ class MainWindow(QMainWindow):
                 continue
             self.console("Exporting from " + export_data["label_name"] + "...")
             QApplication.processEvents()
-            metadata.extend(import_export.split_by_pony(export_data, character, "izo"))
+            metadata.extend(
+                import_export.split_by_pony(export_data, character, self.moods)
+            )
         with open(
             os.path.dirname(os.path.realpath(__file__))
             + "/exported_splits/transcripts.csv",

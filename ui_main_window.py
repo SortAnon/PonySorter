@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'main_window.ui',
 # licensing of 'main_window.ui' applies.
 #
-# Created: Wed Oct 23 13:27:49 2019
+# Created: Sat Dec  7 17:31:03 2019
 #      by: pyside2-uic  running on PySide2 5.13.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -119,7 +119,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setEnabled(True)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 30))
         self.menubar.setObjectName("menubar")
         self.menuLabels = QtWidgets.QMenu(self.menubar)
         self.menuLabels.setObjectName("menuLabels")
@@ -173,7 +173,8 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "Pony Sorter", None, -1))
         self.label_5.setText(QtWidgets.QApplication.translate("MainWindow", "End time", None, -1))
-        self.radio_verynoisy.setText(QtWidgets.QApplication.translate("MainWindow", "Very noisy", None, -1))
+        self.radio_verynoisy.setText(QtWidgets.QApplication.translate("MainWindow", "Very noisy (6)", None, -1))
+        self.radio_verynoisy.setShortcut(QtWidgets.QApplication.translate("MainWindow", "6", None, -1))
         self.button_chooseunmix.setText(QtWidgets.QApplication.translate("MainWindow", "Select iZotope+Unmix (9)", None, -1))
         self.button_chooseunmix.setShortcut(QtWidgets.QApplication.translate("MainWindow", "9", None, -1))
         self.button_next.setText(QtWidgets.QApplication.translate("MainWindow", ">", None, -1))
@@ -182,14 +183,16 @@ class Ui_MainWindow(object):
         self.button_listenorig.setShortcut(QtWidgets.QApplication.translate("MainWindow", "1", None, -1))
         self.button_listenizo.setText(QtWidgets.QApplication.translate("MainWindow", "Listen to iZotope (2)", None, -1))
         self.button_listenizo.setShortcut(QtWidgets.QApplication.translate("MainWindow", "2", None, -1))
-        self.radio_clean.setText(QtWidgets.QApplication.translate("MainWindow", "Clean", None, -1))
+        self.radio_clean.setText(QtWidgets.QApplication.translate("MainWindow", "Clean (4)", None, -1))
+        self.radio_clean.setShortcut(QtWidgets.QApplication.translate("MainWindow", "4", None, -1))
         self.button_listenunmix.setText(QtWidgets.QApplication.translate("MainWindow", "Listen to iZotope+Unmix (3)", None, -1))
         self.button_listenunmix.setShortcut(QtWidgets.QApplication.translate("MainWindow", "3", None, -1))
         self.label_3.setText(QtWidgets.QApplication.translate("MainWindow", "Primary mood", None, -1))
         self.button_chooseorig.setText(QtWidgets.QApplication.translate("MainWindow", "Select original (7)", None, -1))
         self.button_chooseorig.setShortcut(QtWidgets.QApplication.translate("MainWindow", "7", None, -1))
         self.label_2.setText(QtWidgets.QApplication.translate("MainWindow", "Character", None, -1))
-        self.radio_noisy.setText(QtWidgets.QApplication.translate("MainWindow", "Noisy", None, -1))
+        self.radio_noisy.setText(QtWidgets.QApplication.translate("MainWindow", "Noisy (5)", None, -1))
+        self.radio_noisy.setShortcut(QtWidgets.QApplication.translate("MainWindow", "5", None, -1))
         self.label_4.setText(QtWidgets.QApplication.translate("MainWindow", "Start time", None, -1))
         self.button_chooseizo.setText(QtWidgets.QApplication.translate("MainWindow", "Select iZotope (8)", None, -1))
         self.button_chooseizo.setShortcut(QtWidgets.QApplication.translate("MainWindow", "8", None, -1))

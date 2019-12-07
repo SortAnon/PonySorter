@@ -83,7 +83,10 @@
       </rect>
      </property>
      <property name="text">
-      <string>Very noisy</string>
+      <string>Very noisy (6)</string>
+     </property>
+     <property name="shortcut">
+      <string>6</string>
      </property>
     </widget>
     <widget class="QPushButton" name="button_chooseunmix">
@@ -214,7 +217,10 @@
       </rect>
      </property>
      <property name="text">
-      <string>Clean</string>
+      <string>Clean (4)</string>
+     </property>
+     <property name="shortcut">
+      <string>4</string>
      </property>
     </widget>
     <widget class="QPushButton" name="button_listenunmix">
@@ -351,7 +357,10 @@
       </rect>
      </property>
      <property name="text">
-      <string>Noisy</string>
+      <string>Noisy (5)</string>
+     </property>
+     <property name="shortcut">
+      <string>5</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_4">
@@ -423,7 +432,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>23</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuLabels">
