@@ -38,7 +38,7 @@ def import_from_labels(filename):
     episode_data["friendly_name"] = hashes.friendly_names[episode_data["label_name"]]
     episode_data["last_modified"] = datetime.datetime.utcnow().isoformat()
     labels = []
-    with open(filename) as f:
+    with open(filename, encoding="utf-8") as f:
         for i in csv.reader(f, delimiter="\t"):
             label = {}
             label["start"] = float(i[0])
@@ -56,7 +56,7 @@ def import_from_labels(filename):
 
 
 def import_from_json(filename):
-    with open(filename) as f:
+    with open(filename, encoding="utf-8") as f:
         episode_data = json.load(f)
     return episode_data
 
@@ -123,7 +123,7 @@ def export_to_labels(episode_data, character_filter=None, source_filter=None):
         fullpath = dirpath + episode_data["label_name"] + "_" + source_filter + ".txt"
     else:
         fullpath = dirpath + episode_data["label_name"] + ".txt"
-    with open(fullpath, "w") as f:
+    with open(fullpath, "w", encoding="utf-8") as f:
         missing_warning = False
         for l in episode_data["labels"]:
             if character_filter != None and l["character"] != character_filter:
@@ -170,7 +170,7 @@ def split_by_pony(
     default_source="izo",
 ):
     metadata = []
-    dirpath = os.path.dirname(os.path.realpath(__file__)) + "/exported_splits/wavs/"
+    dirpath = os.path.dirname(os.path.realpath(__file__)) + "/exported_clips/wavs/"
     try:
         os.makedirs(dirpath)
     except:
@@ -208,8 +208,8 @@ def export_to_json(episode_data):
     except:
         pass
     fullpath = dirpath + episode_data["label_name"] + ".json"
-    with open(fullpath, "w") as f:
-        json.dump(episode_data, f, indent=4)
+    with open(fullpath, "w", encoding="utf-8") as f:
+        json.dump(episode_data, f, indent=4, ensure_ascii=False)
     return fullpath
 
 
@@ -233,4 +233,70 @@ def hash_audio_files(queue):
     queue.put("Done! Found " + str(new_audio) + " new audio file(s)")
     write_config()
     queue.put("msgdone")
+
+
+def get_chars_and_moods(filename):
+    chars = set()
+    moods = set()
+    episode_data = import_from_json(filename)
+    for l in episode_data["labels"]:
+        chars.add(l["character"])
+        for m in l["mood"]:
+            moods.add(m)
+    return chars, moods
+
+
+def episode_format(name):
+    if name.startswith("fim_s"):
+        return "s" + str(int(name[5:7])) + "e" + str(int(name[8:10]))
+    else:
+        return name.replace("_", "")
+
+
+def format_name(
+    name_format,
+    episode,
+    number,
+    seconds,
+    character,
+    moods,
+    transcript,
+    noise_level,
+    audio_source,
+    extension,
+    filter_reserved,
+    filter_space,
+):
+    # Prepare metadata
+    if noise_level == "noisy":
+        noise = "Noisy"
+    elif noise_level == "verynoisy":
+        noise = "Very Noisy"
+    else:
+        noise = ""
+    hour = int(math.floor(round(seconds) / 3600))
+    minute = int(math.floor(round(seconds) / 60 % 60))
+    second = int(math.floor(round(seconds) % 60))
+
+    # Format output string
+    output = name_format
+    output = output.replace("{h}", "{0:02d}".format(hour))
+    output = output.replace("{m}", "{0:02d}".format(minute))
+    output = output.replace("{s}", "{0:02d}".format(second))
+    output = output.replace("{xs}", "{0:.3f}".format(seconds))
+    output = output.replace("{num}", str(number))
+    output = output.replace("{ep}", episode_format(episode))
+    output = output.replace("{c}", character)
+    output = output.replace("{md}", string.capwords(" ".join(moods)))
+    output = output.replace("{md0}", string.capwords(moods[0]))
+    output = output.replace("{t}", transcript)
+    output = output.replace("{nl}", noise)
+    output = output.replace("{src}", audio_source)
+    if filter_reserved:
+        reserved = ["<", ">", ":", '"', "/", "\\", "|", "?", "*", "\0"]
+        for r in reserved:
+            output = output.replace(r, "")
+    if filter_space:
+        output = output.replace(" ", "")
+    return output.replace("/", "") + "." + extension.lower()
 

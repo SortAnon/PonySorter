@@ -447,17 +447,16 @@
     <property name="title">
      <string>Export</string>
     </property>
-    <addaction name="actionSplit_by_pony"/>
-    <addaction name="actionGenerate_combined_source"/>
+    <addaction name="actionExport_dataset"/>
     <addaction name="actionGenerate_Audacity_labels"/>
     <addaction name="actionGenerate_Audacity_labels_all_episodes"/>
    </widget>
    <addaction name="menuLabels"/>
    <addaction name="menuSplit"/>
   </widget>
-  <action name="actionSplit_by_pony">
+  <action name="actionExport_dataset">
    <property name="text">
-    <string>Split by pony (hardcoded to Twilight)</string>
+    <string>Export clips (UNFINISHED)</string>
    </property>
   </action>
   <action name="actionLoad_episode">
@@ -474,11 +473,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
-   </property>
-  </action>
-  <action name="actionGenerate_combined_source">
-   <property name="text">
-    <string>Generate combined source (not implemented)</string>
    </property>
   </action>
   <action name="actionGenerate_Audacity_labels">

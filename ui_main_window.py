@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'main_window.ui',
 # licensing of 'main_window.ui' applies.
 #
-# Created: Sat Dec  7 17:31:03 2019
+# Created: Sun Jan  5 18:04:20 2020
 #      by: pyside2-uic  running on PySide2 5.13.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -126,15 +126,13 @@ class Ui_MainWindow(object):
         self.menuSplit = QtWidgets.QMenu(self.menubar)
         self.menuSplit.setObjectName("menuSplit")
         MainWindow.setMenuBar(self.menubar)
-        self.actionSplit_by_pony = QtWidgets.QAction(MainWindow)
-        self.actionSplit_by_pony.setObjectName("actionSplit_by_pony")
+        self.actionExport_dataset = QtWidgets.QAction(MainWindow)
+        self.actionExport_dataset.setObjectName("actionExport_dataset")
         self.actionLoad_episode = QtWidgets.QAction(MainWindow)
         self.actionLoad_episode.setObjectName("actionLoad_episode")
         self.actionSave_changes = QtWidgets.QAction(MainWindow)
         self.actionSave_changes.setEnabled(False)
         self.actionSave_changes.setObjectName("actionSave_changes")
-        self.actionGenerate_combined_source = QtWidgets.QAction(MainWindow)
-        self.actionGenerate_combined_source.setObjectName("actionGenerate_combined_source")
         self.actionGenerate_Audacity_labels = QtWidgets.QAction(MainWindow)
         self.actionGenerate_Audacity_labels.setObjectName("actionGenerate_Audacity_labels")
         self.actionAdd_audio_path = QtWidgets.QAction(MainWindow)
@@ -144,8 +142,7 @@ class Ui_MainWindow(object):
         self.menuLabels.addAction(self.actionLoad_episode)
         self.menuLabels.addAction(self.actionSave_changes)
         self.menuLabels.addAction(self.actionAdd_audio_path)
-        self.menuSplit.addAction(self.actionSplit_by_pony)
-        self.menuSplit.addAction(self.actionGenerate_combined_source)
+        self.menuSplit.addAction(self.actionExport_dataset)
         self.menuSplit.addAction(self.actionGenerate_Audacity_labels)
         self.menuSplit.addAction(self.actionGenerate_Audacity_labels_all_episodes)
         self.menubar.addAction(self.menuLabels.menuAction())
@@ -200,11 +197,10 @@ class Ui_MainWindow(object):
         self.secondarymoodlabel.setText(QtWidgets.QApplication.translate("MainWindow", "none (secondary)", None, -1))
         self.menuLabels.setTitle(QtWidgets.QApplication.translate("MainWindow", "Edit", None, -1))
         self.menuSplit.setTitle(QtWidgets.QApplication.translate("MainWindow", "Export", None, -1))
-        self.actionSplit_by_pony.setText(QtWidgets.QApplication.translate("MainWindow", "Split by pony (hardcoded to Twilight)", None, -1))
+        self.actionExport_dataset.setText(QtWidgets.QApplication.translate("MainWindow", "Export clips (UNFINISHED)", None, -1))
         self.actionLoad_episode.setText(QtWidgets.QApplication.translate("MainWindow", "Load episode", None, -1))
         self.actionSave_changes.setText(QtWidgets.QApplication.translate("MainWindow", "Save changes", None, -1))
         self.actionSave_changes.setShortcut(QtWidgets.QApplication.translate("MainWindow", "Ctrl+S", None, -1))
-        self.actionGenerate_combined_source.setText(QtWidgets.QApplication.translate("MainWindow", "Generate combined source (not implemented)", None, -1))
         self.actionGenerate_Audacity_labels.setText(QtWidgets.QApplication.translate("MainWindow", "Generate Audacity labels (current episode)", None, -1))
         self.actionAdd_audio_path.setText(QtWidgets.QApplication.translate("MainWindow", "Add audio path(s)", None, -1))
         self.actionGenerate_Audacity_labels_all_episodes.setText(QtWidgets.QApplication.translate("MainWindow", "Generate Audacity labels (all episodes)", None, -1))

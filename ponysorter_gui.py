@@ -22,8 +22,101 @@ from PySide2.QtCore import QFile, QTimer, Qt
 from PySide2.QtGui import QColor, QTextCursor
 from ui_main_window import Ui_MainWindow
 from ui_load_episode import Ui_Dialog
+from ui_export import Ui_ExportDialog
 import import_export
 import hashes
+
+
+class ExportDialog(QDialog):
+    # Sets up the export dataset window
+    def __init__(self):
+        super(ExportDialog, self).__init__()
+        self.ui = Ui_ExportDialog()
+        self.ui.setupUi(self)
+        self.okay = False
+        self.name_lambda = None
+        self.ui.selectCharacterButton.clicked.connect(
+            lambda: self.select_all(self.ui.characterBox)
+        )
+        self.ui.selectMoodButton.clicked.connect(
+            lambda: self.select_all(self.ui.moodBox)
+        )
+        self.accepted.connect(self.pressed_ok)
+        self.ui.fileNameBox.textChanged.connect(self.update_preview)
+        self.ui.formatBox.currentIndexChanged.connect(self.update_preview)
+        self.ui.reservedBox.stateChanged.connect(self.update_preview)
+        self.ui.spaceBox.stateChanged.connect(self.update_preview)
+        self.ui.fileNameBox.setText("{h}_{m}_{s}_{c}_{md}_{nl}_{t}")
+        all_chars = set()
+        all_moods = set()
+        jsonpath = os.path.dirname(os.path.realpath(__file__)) + "/saved_changes/"
+        for f in os.listdir(jsonpath):
+            c, m = import_export.get_chars_and_moods(os.path.join(jsonpath, f))
+            all_chars = all_chars | c
+            all_moods = all_moods | m
+        for c in sorted(all_chars):
+            item = QListWidgetItem()
+            item.setText(c)
+            item.setCheckState(Qt.Checked)
+            self.ui.characterBox.addItem(item)
+        for m in sorted(all_moods):
+            item = QListWidgetItem()
+            item.setText(m)
+            item.setCheckState(Qt.Checked)
+            self.ui.moodBox.addItem(item)
+
+    # Called if OK is pressed
+    def pressed_ok(self):
+        self.name_lambda = self.get_name_lambda()
+        self.okay = True
+
+    # Select/deselect all items
+    def select_all(self, widget):
+        select = False
+        for i in range(widget.count()):
+            if widget.item(i).data(Qt.CheckStateRole) != Qt.Checked:
+                select = True
+                break
+        for i in range(widget.count()):
+            if select:
+                widget.item(i).setCheckState(Qt.Checked)
+            else:
+                widget.item(i).setCheckState(Qt.Unchecked)
+
+    # Get lambda for filename generation
+    def get_name_lambda(self):
+        return lambda ep, num, s, c, m, t, nl, src: import_export.format_name(
+            self.ui.fileNameBox.text(),
+            ep,
+            num,
+            s,
+            c,
+            m,
+            t,
+            nl,
+            src,
+            self.ui.formatBox.currentText(),
+            self.ui.reservedBox.isChecked(),
+            self.ui.spaceBox.isChecked(),
+        )
+
+    # Update filename preview
+    def update_preview(self):
+        get_name = self.get_name_lambda()
+        self.ui.namePreview.setText(
+            "Preview: "
+            + get_name(
+                "fim_s02e05",
+                270,
+                1272.29166,
+                "Twilight",
+                ["angry", "shouting"],
+                "I am trained in gorilla warfare!",
+                "verynoisy",
+                "izo",
+            )
+        )
+        self.ui.namePreview.setToolTip(self.ui.namePreview.text())
 
 
 class LoadDialog(QDialog):
@@ -116,9 +209,7 @@ class MainWindow(QMainWindow):
         self.ui.actionGenerate_Audacity_labels.triggered.connect(
             lambda: self.export_to_labels(None)
         )
-        self.ui.actionSplit_by_pony.triggered.connect(
-            lambda: self.split_by_pony("Twilight")
-        )
+        self.ui.actionExport_dataset.triggered.connect(self.export_dataset)
         self.ui.actionGenerate_Audacity_labels_all_episodes.triggered.connect(
             lambda: self.export_all_labels(None)
         )
@@ -291,6 +382,7 @@ class MainWindow(QMainWindow):
         if not self.dialog.okay:
             return
         self.episode_data = self.dialog.episode_data
+        self.update_title(False)
         first_unreviewed = 0
         for i, l in enumerate(self.episode_data["labels"]):
             if l["reviewed"] == False:
@@ -386,7 +478,7 @@ class MainWindow(QMainWindow):
             + "/exported_labels/"
         )
 
-    # Splits audio samples and generates LJ Speech metadata
+    # (UNUSED) Splits audio samples and generates LJ Speech metadata
     def split_by_pony(self, character=None):
         metadata = []
         for k, _ in hashes.friendly_names.items():
@@ -412,7 +504,7 @@ class MainWindow(QMainWindow):
             )
         with open(
             os.path.dirname(os.path.realpath(__file__))
-            + "/exported_splits/transcripts.csv",
+            + "/exported_clips/transcripts.csv",
             "w",
         ) as f:
             for m in metadata:
@@ -422,8 +514,28 @@ class MainWindow(QMainWindow):
             + character
             + " splits to "
             + os.path.dirname(os.path.realpath(__file__))
-            + "/exported_splits/"
+            + "/exported_clips/"
         )
+
+    # Opens export dialog
+    def export_dataset(self):
+        if self.unsavedChanges:
+            changesAsk = QMessageBox.question(
+                self,
+                "Save changes?",
+                "Save changes before exporting dataset?",
+                QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel,
+            )
+            if changesAsk == QMessageBox.Cancel:
+                return
+            if changesAsk == QMessageBox.Yes:
+                self.save_changes()
+        self.dialog = ExportDialog()
+        self.dialog.exec_()
+        if not self.dialog.okay:
+            return
+        self.console("Export dummy message")
+        return
 
     # Update the paths where the audio files are stored
     def add_audio_path(self):
