@@ -319,14 +319,14 @@ class MainWindow(QMainWindow):
 
     # Enables/disables the choice buttons
     def toggle_choices(self):
-        if self.listened == [True, True, True]:
+        if self.listened[0] == True and self.listened[1] == True:
             self.ui.button_chooseorig.setEnabled(True)
             self.ui.button_chooseizo.setEnabled(True)
-            self.ui.button_chooseunmix.setEnabled(True)
+            # self.ui.button_chooseunmix.setEnabled(True)
         else:
             self.ui.button_chooseorig.setEnabled(False)
             self.ui.button_chooseizo.setEnabled(False)
-            self.ui.button_chooseunmix.setEnabled(False)
+            # self.ui.button_chooseunmix.setEnabled(False)
 
     # Writes the modified widget contents back to episode_data
     def update_dictionary(self):
@@ -422,13 +422,13 @@ class MainWindow(QMainWindow):
             self.console("Loading iZo audio from " + izo_path + "...")
             QApplication.processEvents()
             self.source2 = oalOpen(convert_to_ogg(izo_path, ".temp2"))
-        if unmix_path == "":
+        """if unmix_path == "":
             self.console("Error: iZo+Unmix audio not found")
             self.source3 = None
         else:
             self.console("Loading iZo+Unmix audio from " + unmix_path + "...")
             QApplication.processEvents()
-            self.source3 = oalOpen(convert_to_ogg(unmix_path, ".temp3"))
+            self.source3 = oalOpen(convert_to_ogg(unmix_path, ".temp3"))"""
         self.console("\nLoading complete!")
         self.ui.all_buttons.setEnabled(True)
 
@@ -588,4 +588,3 @@ if __name__ == "__main__":
     )
     window.show()
     sys.exit(app.exec_())
-

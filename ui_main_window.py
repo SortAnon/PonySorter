@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'main_window.ui',
 # licensing of 'main_window.ui' applies.
 #
-# Created: Sun Jan  5 18:04:20 2020
+# Created: Fri Nov  5 10:16:35 2021
 #      by: pyside2-uic  running on PySide2 5.13.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,7 +36,7 @@ class Ui_MainWindow(object):
         self.radio_verynoisy.setGeometry(QtCore.QRect(670, 150, 104, 22))
         self.radio_verynoisy.setObjectName("radio_verynoisy")
         self.button_chooseunmix = QtWidgets.QPushButton(self.all_buttons)
-        self.button_chooseunmix.setEnabled(True)
+        self.button_chooseunmix.setEnabled(False)
         self.button_chooseunmix.setGeometry(QtCore.QRect(510, 70, 201, 61))
         self.button_chooseunmix.setObjectName("button_chooseunmix")
         self.button_next = QtWidgets.QPushButton(self.all_buttons)
@@ -68,7 +68,7 @@ class Ui_MainWindow(object):
         self.radio_clean.setGeometry(QtCore.QRect(490, 150, 81, 22))
         self.radio_clean.setObjectName("radio_clean")
         self.button_listenunmix = QtWidgets.QPushButton(self.all_buttons)
-        self.button_listenunmix.setEnabled(True)
+        self.button_listenunmix.setEnabled(False)
         self.button_listenunmix.setGeometry(QtCore.QRect(510, 10, 201, 51))
         self.button_listenunmix.setObjectName("button_listenunmix")
         self.label_3 = QtWidgets.QLabel(self.all_buttons)
@@ -119,7 +119,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setEnabled(True)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 30))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 29))
         self.menubar.setObjectName("menubar")
         self.menuLabels = QtWidgets.QMenu(self.menubar)
         self.menuLabels.setObjectName("menuLabels")

@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'export.ui',
 # licensing of 'export.ui' applies.
 #
-# Created: Sun Jan  5 18:04:20 2020
+# Created: Fri Nov  5 10:16:36 2021
 #      by: pyside2-uic  running on PySide2 5.13.1
 #
 # WARNING! All changes made in this file will be lost!
