@@ -1,17 +1,17 @@
 # Pony Sorter
-A faster way to review the existing labels and select the cleanest audio source.
+A tool used by the Pony Preservation Project. If you don't know what it does, you probably don't need it.
 
 ## Getting started
 * Clone this repo. Optionally, Windows users can download the binary release.
-* Download all audio sources for the episodes you plan to work with. You can find a link to the uncleaned seasons 1-8 on Google Docs. The iZotope filtered audio is in Clipper's MEGA in the OP. The Open-Unmix filtered audio is in another MEGA, linked to in post 34429137 (thread 11).
+* Download all audio sources for the episodes you plan to work with.
 * Download the label files from Clipper's MEGA, and copy them to /labels.
-* Run ```pip3 install -r requirements.txt```, followed by ```python3 ponysorter_gui.py```. (Or run ponysorter_gui.exe on Windows)
+* Run ```pip3 install -r requirements.txt```, followed by ```python3 ponysorter_gui.py```. (Or download the Windows release)
 * Go to Edit -> Add audio path(s). Paste the path or paths where the audio files are stored.
 * Wait ~5 minutes for the files to get hashed. This is only done once for new files, and ensures that everyone is working with the same audio sources.
-* Go to Edit -> Load episode. You should see a list of all episodes from seasons 1-6.
+* Go to Edit -> Load episode. You should see a list of all found episodes.
 
 ## How to use
-* Load an episode. Check the thread to see who's working on what.
+* Load an episode.
 * Listen to all three versions of the line. You can either click the buttons at the top, or use the numeric keys as indicated.
 * Adjust the label data if it's wrong.
 * Select the audio source that strikes the best balance between quality and noise reduction.
